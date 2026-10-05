@@ -10,7 +10,7 @@ export class ChamadosService {
   private proximoCodigo = 1;
 
   create(createChamadoDto: CreateChamadoDto): Chamado {
-    const novoChamado = {
+    const novoChamado: Chamado = {
       id: this.proximoCodigo,
       titulo: createChamadoDto.titulo,
       descricao: createChamadoDto.descricao,
@@ -23,19 +23,29 @@ export class ChamadosService {
     return novoChamado;
   }
 
-  findAll() {
-    return `This action returns all chamados`;
+  findAll(): Chamado[] {
+    return this.chamados;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chamado`;
+  findOne(id: number): Chamado | undefined {
+    return this.chamados.find((c) => c.id === id);
   }
 
-  update(id: number, updateChamadoDto: UpdateChamadoDto) {
-    return `This action updates a #${id} chamado`;
+  update(id: number, updateChamadoDto: UpdateChamadoDto): Chamado | undefined {
+    const chamado = this.findOne(id);
+    if (chamado === undefined) {
+      return undefined;
+    }
+
+    Object.assign(chamado, updateChamadoDto);
+    return chamado;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} chamado`;
+  remove(id: number):void {
+    const indice = this.chamados.findIndex((c) => c.id === id);
+
+    if (indice !== -1) {
+      this.chamados.splice(indice, 1);
+    }
   }
 }
