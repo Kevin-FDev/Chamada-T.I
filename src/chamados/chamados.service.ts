@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateChamadoDto } from './dto/create-chamado.dto.js';
 import { UpdateChamadoDto } from './dto/update-chamado.dto.js';
 import { Chamado } from './entities/chamado.entity.js';
@@ -27,25 +27,33 @@ export class ChamadosService {
     return this.chamados;
   }
 
-  findOne(id: number): Chamado | undefined {
-    return this.chamados.find((c) => c.id === id);
-  }
+  findOne(id: number): Chamado {
+    const chamado = this.chamados.find((c) => c.id === id);
 
-  update(id: number, updateChamadoDto: UpdateChamadoDto): Chamado | undefined {
-    const chamado = this.findOne(id);
     if (chamado === undefined) {
-      return undefined;
+      throw new NotFoundException(`ID ${id} não encontrado`);
     }
 
-    Object.assign(chamado, updateChamadoDto);
     return chamado;
   }
 
-  remove(id: number):void {
+  update(id: number, updateChamadoDto: UpdateChamadoDto): Chamado {
+    const chamado = this.findOne(id);
+
+    Object.assign(chamado, updateChamadoDto);
+
+    return chamado;
+  }
+
+  remove(id: number): void {
     const indice = this.chamados.findIndex((c) => c.id === id);
 
-    if (indice !== -1) {
-      this.chamados.splice(indice, 1);
+    if (indice === -1) {
+      
+      throw new NotFoundException(`ID ${id} não encontrado`);
     }
+    this.chamados.splice(indice, 1);
+
+  
   }
 }
