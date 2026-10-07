@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum StatusChamado {
+  ABERTO
+  EM_ANDAMENTO
+  CONCLUIDO
+}
+
+model Chamado {
+  id        Int           @id @default(autoincrement())
+  titulo    String
+  descricao String?
+  status    StatusChamado @default(ABERTO)
+  criadoEm  DateTime      @default(now())
+}
