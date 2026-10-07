@@ -1,39 +1,31 @@
-# 🛠️ Helpdesk System - Backend API
+# Backend de Gerenciamento de Chamados de TI
 
-API RESTful robusta para gestão de chamados de suporte técnico e atendimento ao cliente, construída com boas práticas da indústria, arquitetura modular e tipagem estática.
-
----
-
-## 🚀 Tecnologias Utilizadas
-
-- **Framework:** [NestJS](https://nestjs.com/) (Node.js + TypeScript)
-- **ORM:** [Prisma](https://www.prisma.io/)
-- **Banco de Dados:** [PostgreSQL](https://www.postgresql.org/)
-- **Containerização:** [Docker](https://www.docker.com/) & Docker Compose
-- **Testes:** Jest
+Este projeto é um backend desenvolvido para o gerenciamento de chamados de suporte de TI no contexto acadêmico. A aplicação permite a abertura, consulta, atualização e remoção (CRUD completo) de chamados, contando com validações automáticas de dados, persistência em banco relacional e documentação de API.
 
 ---
 
-## 📊 Estrutura do Banco de Dados
+## 🛠️ Tecnologias Utilizadas
 
-A aplicação utiliza o **Prisma ORM** com a seguinte modelagem principal:
-
-- **User:** Gestão de utilizadores com perfis de acesso (`CLIENT`, `AGENT`, `ADMIN`).
-- **Ticket:** Gestão de chamados com estados (`OPEN`, `IN_PROGRESS`, `RESOLVED`, `CLOSED`) e prioridades (`LOW`, `MEDIUM`, `HIGH`, `URGENT`).
-- **Comment:** Histórico de interações e respostas dentro de cada chamado.
+- **Linguagem & Framework:** TypeScript, NestJS
+- **ORM:** Prisma
+- **Banco de Dados:** PostgreSQL
+- **Containerização:** Docker e Docker Compose
+- **Documentação de API:** Swagger (`@nestjs/swagger`)
+- **Validação de Dados:** `class-validator` e `class-transformer`
+- **Testes Automatizados:** Vitest / NestJS Testing
+- **Gerenciador de Pacotes:** `pnpm`
 
 ---
 
-## 🛠️ Como Executar o Projeto
+## ⚙️ Instruções de Configuração e Execução
 
 ### Pré-requisitos
+- Node.js instalado (v18 ou superior)
+- `pnpm` instalado (`npm install -g pnpm`)
+- Docker e Docker Compose instalados e em execução
 
-- [Node.js](https://nodejs.org/) (v18 ou superior)
-- [Docker](https://www.docker.com/) e Docker Compose
+### Passo a Passo
 
-### Passos
-
-1. **Clonar o repositório:**
+1. **Instalar as dependências do projeto:**
    ```bash
-   git clone [https://github.com/teu-usuario/nome-do-projeto.git](https://github.com/teu-usuario/nome-do-projeto.git)
-   cd nome-do-projeto
+   pnpm install

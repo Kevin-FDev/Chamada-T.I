@@ -2,57 +2,46 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateChamadoDto } from './dto/create-chamado.dto.js';
 import { UpdateChamadoDto } from './dto/update-chamado.dto.js';
 import { Chamado } from './entities/chamado.entity.js';
-import { StatusChamado } from './entities/status-chamado.enum.js';
+import { PrismaService } from '../prisma/prisma.service.js';
 
 @Injectable()
 export class ChamadosService {
-  private chamados: Chamado[] = [];
-  private proximoCodigo = 1;
+  constructor(private readonly prisma: PrismaService) {}
 
-  create(createChamadoDto: CreateChamadoDto): Chamado {
-    const novoChamado: Chamado = {
-      id: this.proximoCodigo,
-      titulo: createChamadoDto.titulo,
-      descricao: createChamadoDto.descricao,
-      status: StatusChamado.ABERTO,
-      criadoEm: new Date(),
-    };
-    this.proximoCodigo++;
-    this.chamados.push(novoChamado);
-
-    return novoChamado;
+  async create(createChamadoDto: CreateChamadoDto): Promise<Chamado> {
+    return await this.prisma.chamado.create({
+      data: {
+        titulo: createChamadoDto.titulo,
+        descricao: createChamadoDto.descricao,
+      },
+    });
   }
 
-  findAll(): Chamado[] {
-    return this.chamados;
+  async findAll(): Promise<Chamado[]> {
+    return await this.prisma.chamado.findMany();
   }
 
-  findOne(id: number): Chamado {
-    const chamado = this.chamados.find((c) => c.id === id);
+  async findOne(id: number): Promise<Chamado> {
+    const chamado = await this.prisma.chamado.findUnique({where: {id}});
 
-    if (chamado === undefined) {
+    if (!chamado) {
       throw new NotFoundException(`ID ${id} não encontrado`);
     }
 
     return chamado;
   }
 
-  update(id: number, updateChamadoDto: UpdateChamadoDto): Chamado {
-    const chamado = this.findOne(id);
+  async update(id: number, updateChamadoDto: UpdateChamadoDto): Promise<Chamado> {
+    
+    await this.findOne(id)
 
-    Object.assign(chamado, updateChamadoDto);
-
-    return chamado;
+    return await this.prisma.chamado.update({ where: { id }, data: updateChamadoDto });
   }
 
-  remove(id: number): void {
-    const indice = this.chamados.findIndex((c) => c.id === id);
+  async remove(id: number): Promise<void> {
+    await this.findOne(id)
 
-    if (indice === -1) {
-      
-      throw new NotFoundException(`ID ${id} não encontrado`);
-    }
-    this.chamados.splice(indice, 1);
+    await this.prisma.chamado.delete({where: {id}});
 
   
   }

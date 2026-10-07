@@ -11,3 +11,4 @@ export class CreateChamadoDto {
   @MaxLength(250)
   descricao?: string;
 }
+  
