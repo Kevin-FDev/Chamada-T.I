@@ -16,3 +16,11 @@ export const StatusChamado = {
 } as const
 
 export type StatusChamado = (typeof StatusChamado)[keyof typeof StatusChamado]
+
+
+export const Papel = {
+  ADMIN: 'ADMIN',
+  USER: 'USER'
+} as const
+
+export type Papel = (typeof Papel)[keyof typeof Papel]

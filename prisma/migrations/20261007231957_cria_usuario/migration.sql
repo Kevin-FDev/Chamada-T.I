@@ -1,0 +1,17 @@
+-- CreateEnum
+CREATE TYPE "Papel" AS ENUM ('ADMIN', 'USER');
+
+-- CreateTable
+CREATE TABLE "Usuario" (
+    "id" SERIAL NOT NULL,
+    "nome" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "senhaHash" TEXT NOT NULL,
+    "papel" "Papel" NOT NULL DEFAULT 'USER',
+    "criadoEm" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Usuario_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Usuario_email_key" ON "Usuario"("email");
