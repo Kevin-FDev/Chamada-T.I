@@ -7,11 +7,14 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ChamadosService } from './chamados.service.js';
 import { CreateChamadoDto } from './dto/create-chamado.dto.js';
 import { UpdateChamadoDto } from './dto/update-chamado.dto.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 
+@UseGuards(JwtAuthGuard)
 @Controller('chamados')
 export class ChamadosController {
   constructor(private readonly chamadosService: ChamadosService) {}

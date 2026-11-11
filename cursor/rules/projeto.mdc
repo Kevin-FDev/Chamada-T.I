@@ -1,0 +1,45 @@
+---
+description: Contexto do projeto de chamados (stack, convenções, estado atual).
+alwaysApply: true
+---
+
+# Projeto
+
+Sistema de chamados de T.I. em NestJS + TypeScript. Usuário comum abre e consulta chamados.
+Admin da T.I. muda o status (ABERTO, EM_ANDAMENTO, CONCLUIDO).
+
+# Stack e ambiente
+
+- NestJS, TypeScript em ESM (imports locais terminam em `.js`), pnpm, Node 22, Vitest, Prettier, oxlint.
+- PostgreSQL em Docker (`docker-compose.yml`, com volume). Subir com `docker compose up -d`.
+- Prisma 7.10.0 FIXO. NÃO atualizar para a versão 8 (rc). Config em `prisma7.config.ts`. Cliente gerado em `src/generated/prisma`.
+- Variáveis em `.env` (nunca vai ao Git). `.env.example` só com valores de exemplo.
+- Módulos: `chamados`, `usuarios`, `auth`, `prisma`.
+
+# Convenções do projeto
+
+- Controller magro. Regra de negócio e erros ficam no service.
+- DTOs com class-validator e `@ApiProperty` (description e example) para o Swagger.
+- `ValidationPipe` global com `whitelist: true`.
+- Erros com exceções do Nest: 404 NotFound, 409 Conflict, 401 Unauthorized.
+- Senha só em hash (bcryptjs). `senhaHash` nunca volta na resposta (usar `select`).
+- `papel` e `status` NÃO entram nos DTOs de criação.
+- Chave do JWT em `JWT_SECRET` no `.env`.
+
+# Estado atual
+
+Pronto: CRUD de chamados com Prisma (async/await), validação, 404, cadastro de usuário com hash, Swagger no CRUD.
+Em andamento: login. `AuthModule` com `JwtModule.registerAsync` lendo `JWT_SECRET`; `AuthService` busca o usuário, compara com `bcrypt.compare`, responde 401 com a MESMA mensagem para e-mail ou senha errados, e gera o JWT.
+Depois: Guard de autenticação, Guard de papéis (só ADMIN muda o status), ligar Chamado ao Usuario, Swagger com Authorize, testes (sucesso e erro do CRUD e do login), README com `.env.example`.
+
+# Requisitos do trabalho da faculdade
+
+CRUD completo com validação, Docker com volume e instruções, Swagger do CRUD e do login, testes automatizados (Jest ou Vitest) com sucesso e erro, README.
+O enunciado pede MongoDB com Mongoose, mas o Kevin decidiu usar PostgreSQL, ciente do risco.
+
+# Armadilhas que já aconteceram
+
+- Auto-import errado (ex.: `@nestjs/common/internal`, `isString` minúsculo no lugar de `IsString`). Ler o caminho do import antes de aceitar.
+- Enum do Prisma não leva vírgula. Modelo do Prisma começa com maiúscula.
+- `==` no lugar de `===`. `return` esquecido (resposta 200 vazia).
+- `findUnique` do Prisma devolve `null` (usar `!x`, não `=== undefined`).
