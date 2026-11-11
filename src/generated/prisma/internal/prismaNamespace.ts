@@ -610,7 +610,8 @@ export const ChamadoScalarFieldEnum = {
   titulo: 'titulo',
   descricao: 'descricao',
   status: 'status',
-  criadoEm: 'criadoEm'
+  criadoEm: 'criadoEm',
+  usuarioId: 'usuarioId'
 } as const
 
 export type ChamadoScalarFieldEnum = (typeof ChamadoScalarFieldEnum)[keyof typeof ChamadoScalarFieldEnum]

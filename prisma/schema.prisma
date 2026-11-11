@@ -24,13 +24,16 @@ model Chamado {
   descricao String?
   status    StatusChamado @default(ABERTO)
   criadoEm  DateTime      @default(now())
+  usuarioId Int
+  usuario   Usuario       @relation(fields: [usuarioId], references: [id])
 }
 
 model Usuario {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   nome      String
-  email     String   @unique
+  email     String    @unique
   senhaHash String
-  papel     Papel    @default(USER)
-  criadoEm  DateTime @default(now())
+  papel     Papel     @default(USER)
+  criadoEm  DateTime  @default(now())
+  chamados  Chamado[]
 }
