@@ -14,7 +14,9 @@ async function bootstrap() {
     .setDescription('Sistema backend para gerenciamento de chamados acadêmicos')
     .setVersion('1.0')
     .addTag('chamados')
+    .addBearerAuth()
     .build();
+    
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
