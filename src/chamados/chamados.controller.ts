@@ -8,12 +8,14 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ChamadosService } from './chamados.service.js';
 import { CreateChamadoDto } from './dto/create-chamado.dto.js';
 import { UpdateChamadoDto } from './dto/update-chamado.dto.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import type { RequisicaoComUsuario } from '../auth/requisicao-com-usuario.js';
 
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -21,10 +23,11 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 export class ChamadosController {
   constructor(private readonly chamadosService: ChamadosService) {}
 
+  
   @Post()
-  create(@Body() createChamadoDto: CreateChamadoDto) {
-    return this.chamadosService.create(createChamadoDto);
-  }
+  create(@Body() dto: CreateChamadoDto, @Req() req: RequisicaoComUsuario) {
+    return this.chamadosService.create(dto, req.user.sub);
+  } 
 
   @Get()
   findAll() {

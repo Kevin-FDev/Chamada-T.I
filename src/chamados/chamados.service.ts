@@ -8,11 +8,12 @@ import { PrismaService } from '../prisma/prisma.service.js';
 export class ChamadosService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createChamadoDto: CreateChamadoDto): Promise<Chamado> {
+  async create(createChamadoDto: CreateChamadoDto, usuarioId: number): Promise<Chamado> {
     return await this.prisma.chamado.create({
       data: {
         titulo: createChamadoDto.titulo,
         descricao: createChamadoDto.descricao,
+        usuarioId: usuarioId
       },
     });
   }
