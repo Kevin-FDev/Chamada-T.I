@@ -3,6 +3,7 @@ import { CreateChamadoDto } from './dto/create-chamado.dto.js';
 import { UpdateChamadoDto } from './dto/update-chamado.dto.js';
 import { Chamado } from './entities/chamado.entity.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { StatusChamado } from './entities/status-chamado.enum.js';
 
 @Injectable()
 export class ChamadosService {
@@ -55,6 +56,21 @@ export class ChamadosService {
     return await this.prisma.chamado.update({
       where: { id },
       data: updateChamadoDto,
+    });
+  }
+
+
+  async updateStatus(
+    id: number,
+    status: StatusChamado,
+    usuarioId: number,
+    papel: string,
+  ): Promise<Chamado> {
+    await this.findOne(id, usuarioId, papel);
+
+    return await this.prisma.chamado.update({
+      where: { id },
+      data: { status },
     });
   }
 
