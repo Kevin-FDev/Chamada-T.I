@@ -18,8 +18,12 @@ export class ChamadosService {
     });
   }
 
-  async findAll(): Promise<Chamado[]> {
-    return await this.prisma.chamado.findMany();
+  async findAll(usuarioId: number, papel: string): Promise<Chamado[]> {
+    if (papel === 'ADMIN') {
+      return await this.prisma.chamado.findMany();
+    }
+
+    return await this.prisma.chamado.findMany({where: {usuarioId}});
   }
 
   async findOne(id: number): Promise<Chamado> {

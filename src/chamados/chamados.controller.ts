@@ -30,8 +30,8 @@ export class ChamadosController {
   } 
 
   @Get()
-  findAll() {
-    return this.chamadosService.findAll();
+  findAll(@Req() req: RequisicaoComUsuario) {
+    return this.chamadosService.findAll(req.user.sub, req.user.papel);
   }
 
   @Get(':id')
