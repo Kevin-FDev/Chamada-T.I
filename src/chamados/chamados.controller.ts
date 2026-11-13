@@ -21,13 +21,13 @@ import type { RequisicaoComUsuario } from '../auth/requisicao-com-usuario.js';
 @ApiBearerAuth()
 @Controller('chamados')
 export class ChamadosController {
-  constructor(private readonly chamadosService: ChamadosService) {}
+  constructor(private readonly chamadosService: ChamadosService) { }
 
-  
+
   @Post()
   create(@Body() dto: CreateChamadoDto, @Req() req: RequisicaoComUsuario) {
     return this.chamadosService.create(dto, req.user.sub);
-  } 
+  }
 
   @Get()
   findAll(@Req() req: RequisicaoComUsuario) {
@@ -35,20 +35,32 @@ export class ChamadosController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.chamadosService.findOne(id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: RequisicaoComUsuario,
+  ) {
+    return this.chamadosService.findOne(id, req.user.sub, req.user.papel);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateChamadoDto: UpdateChamadoDto,
+    @Req() req: RequisicaoComUsuario,
   ) {
-    return this.chamadosService.update(id, updateChamadoDto);
+    return this.chamadosService.update(
+      id,
+      updateChamadoDto,
+      req.user.sub,
+      req.user.papel,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.chamadosService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: RequisicaoComUsuario,
+  ) {
+    return this.chamadosService.remove(id, req.user.sub, req.user.papel);
   }
 }

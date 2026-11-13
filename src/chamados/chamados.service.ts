@@ -6,7 +6,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 
 @Injectable()
 export class ChamadosService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createChamadoDto: CreateChamadoDto, usuarioId: number): Promise<Chamado> {
     return await this.prisma.chamado.create({
@@ -23,31 +23,44 @@ export class ChamadosService {
       return await this.prisma.chamado.findMany();
     }
 
-    return await this.prisma.chamado.findMany({where: {usuarioId}});
+    return await this.prisma.chamado.findMany({ where: { usuarioId } });
   }
 
-  async findOne(id: number): Promise<Chamado> {
-    const chamado = await this.prisma.chamado.findUnique({where: {id}});
+  async findOne(
+    id: number,
+    usuarioId: number,
+    papel: string,
+  ): Promise<Chamado> {
+    const chamado = await this.prisma.chamado.findUnique({ where: { id } });
 
     if (!chamado) {
       throw new NotFoundException(`ID ${id} não encontrado`);
     }
 
+    if (papel !== 'ADMIN' && chamado.usuarioId !== usuarioId) {
+      throw new NotFoundException(`Sem acesso a esse chamado`);
+    }
+
     return chamado;
   }
 
-  async update(id: number, updateChamadoDto: UpdateChamadoDto): Promise<Chamado> {
-    
-    await this.findOne(id)
+  async update(
+    id: number,
+    updateChamadoDto: UpdateChamadoDto,
+    usuarioId: number,
+    papel: string,
+  ): Promise<Chamado> {
+    await this.findOne(id, usuarioId, papel);
 
-    return await this.prisma.chamado.update({ where: { id }, data: updateChamadoDto });
+    return await this.prisma.chamado.update({
+      where: { id },
+      data: updateChamadoDto,
+    });
   }
 
-  async remove(id: number): Promise<void> {
-    await this.findOne(id)
+  async remove(id: number, usuarioId: number, papel: string): Promise<void> {
+    await this.findOne(id, usuarioId, papel);
 
-    await this.prisma.chamado.delete({where: {id}});
-
-  
+    await this.prisma.chamado.delete({ where: { id } });
   }
 }
