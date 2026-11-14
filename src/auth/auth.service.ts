@@ -12,9 +12,11 @@ export class AuthService {
   ) {}
 
   async login(dto: LoginDto) {
+    const email = dto.email.trim().toLowerCase();
+
     const usuario = await this.prisma.usuario.findUnique({
-      where: { email: dto.email },
-    });
+      where: { email },
+    }); 
 
     const senhaConfere = usuario
       ? await bcrypt.compare(dto.senha, usuario.senhaHash)

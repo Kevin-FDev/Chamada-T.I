@@ -71,5 +71,25 @@ describe('UsuariosService', () => {
 
       expect(prismaFalso.usuario.create).not.toHaveBeenCalled();
     });
+
+    it('grava o e-mail em minúsculas e sem espaços', async () => {
+      prismaFalso.usuario.findUnique.mockResolvedValue(null);
+      prismaFalso.usuario.create.mockResolvedValue({ id: 1 });
+
+      await service.create({ ...dto, email: ' Kevin@Teste.COM ' });
+
+      expect(prismaFalso.usuario.findUnique).toHaveBeenCalledWith({
+        where: { email: 'kevin@teste.com' },
+      });
+      const argumentos = prismaFalso.usuario.create.mock.calls[0][0];
+      expect(argumentos.data.email).toBe('kevin@teste.com');
+    });
+
+    it('e-mail duplicado detectado pelo banco (P2002) vira 409', async () => {
+      prismaFalso.usuario.findUnique.mockResolvedValue(null);
+      prismaFalso.usuario.create.mockRejectedValue({ code: 'P2002' });
+
+      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+    });
   });
 });

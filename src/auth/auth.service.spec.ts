@@ -69,6 +69,17 @@ describe('AuthService', () => {
       });
     });
 
+    it('procura o usuário com o e-mail em minúsculas', async () => {
+      prismaFalso.usuario.findUnique.mockResolvedValue(usuarioNoBanco);
+      jwtFalso.signAsync.mockResolvedValue('token-de-teste');
+
+      await service.login({ email: ' Kevin@Teste.COM ', senha: '123456' });
+
+      expect(prismaFalso.usuario.findUnique).toHaveBeenCalledWith({
+        where: { email: 'kevin@teste.com' },
+      });
+    });
+
     it('com e-mail que não existe, lança 401 e não gera token', async () => {
       prismaFalso.usuario.findUnique.mockResolvedValue(null);
 

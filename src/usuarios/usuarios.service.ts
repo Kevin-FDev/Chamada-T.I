@@ -1,15 +1,17 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { CreateUsuarioDto } from './dto/create-usuario.dto.js';
-import { PrismaService } from '../prisma/prisma.service.js';
 import bcrypt from 'bcryptjs';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { CreateUsuarioDto } from './dto/create-usuario.dto.js';
 
 @Injectable()
 export class UsuariosService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateUsuarioDto) {
+    const email = dto.email.trim().toLowerCase();
+
     const existente = await this.prisma.usuario.findUnique({
-      where: { email: dto.email },
+      where: { email },
     });
 
     if (existente) {
@@ -18,15 +20,27 @@ export class UsuariosService {
 
     const senhaHash = await bcrypt.hash(dto.senha, 10);
 
-    return await this.prisma.usuario.create({
-      data: { nome: dto.nome, email: dto.email, senhaHash: senhaHash },
-      select: {
-        id: true,
-        nome: true,
-        email: true,
-        papel: true,
-        criadoEm: true,
-      },
-    });
+    try {
+      return await this.prisma.usuario.create({
+        data: { nome: dto.nome, email, senhaHash },
+        select: {
+          id: true,
+          nome: true,
+          email: true,
+          papel: true,
+          criadoEm: true,
+        },
+      });
+    } catch (erro) {
+      if (
+        typeof erro === 'object' &&
+        erro !== null &&
+        'code' in erro &&
+        erro.code === 'P2002'
+      ) {
+        throw new ConflictException('Email já cadastrado');
+      }
+      throw erro;
+    }
   }
 }
