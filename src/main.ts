@@ -2,11 +2,19 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule, ObserveInstrument } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     instrument: ObserveInstrument,
   });
+
+  app.use(cookieParser());
+  app.enableCors({
+    origin: process.env.FRONT_URL ?? 'http://localhost:5173',
+    credentials: true,
+  });
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const config = new DocumentBuilder()
@@ -16,7 +24,6 @@ async function bootstrap() {
     .addTag('chamados')
     .addBearerAuth()
     .build();
-    
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

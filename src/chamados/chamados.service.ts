@@ -5,26 +5,36 @@ import { Chamado } from './entities/chamado.entity.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { StatusChamado } from './entities/status-chamado.enum.js';
 
+const incluirDono = {
+  usuario: { select: { nome: true, email: true } },
+};
+
 @Injectable()
 export class ChamadosService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-  async create(createChamadoDto: CreateChamadoDto, usuarioId: number): Promise<Chamado> {
+  async create(
+    createChamadoDto: CreateChamadoDto,
+    usuarioId: number,
+  ): Promise<Chamado> {
     return await this.prisma.chamado.create({
       data: {
         titulo: createChamadoDto.titulo,
         descricao: createChamadoDto.descricao,
-        usuarioId: usuarioId
+        usuarioId: usuarioId,
       },
     });
   }
 
   async findAll(usuarioId: number, papel: string): Promise<Chamado[]> {
     if (papel === 'ADMIN') {
-      return await this.prisma.chamado.findMany();
+      return await this.prisma.chamado.findMany({ include: incluirDono });
     }
 
-    return await this.prisma.chamado.findMany({ where: { usuarioId } });
+    return await this.prisma.chamado.findMany({
+      where: { usuarioId },
+      include: incluirDono,
+    });
   }
 
   async findOne(
@@ -32,7 +42,10 @@ export class ChamadosService {
     usuarioId: number,
     papel: string,
   ): Promise<Chamado> {
-    const chamado = await this.prisma.chamado.findUnique({ where: { id } });
+    const chamado = await this.prisma.chamado.findUnique({
+      where: { id },
+      include: incluirDono,
+    });
 
     if (!chamado) {
       throw new NotFoundException(`ID ${id} não encontrado`);
@@ -58,7 +71,6 @@ export class ChamadosService {
       data: updateChamadoDto,
     });
   }
-
 
   async updateStatus(
     id: number,

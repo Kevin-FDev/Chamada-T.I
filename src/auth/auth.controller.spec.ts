@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { JwtService } from '@nestjs/jwt';
 import { AuthController } from './auth.controller.js';
 import { AuthService } from './auth.service.js';
 
@@ -11,8 +12,9 @@ describe('AuthController', () => {
       providers: [
         {
           provide: AuthService,
-          useValue: { login: vi.fn() },
+          useValue: { login: vi.fn(), perfil: vi.fn() },
         },
+        { provide: JwtService, useValue: {} },
       ],
     }).compile();
 

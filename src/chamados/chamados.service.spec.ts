@@ -66,6 +66,10 @@ describe('ChamadosService', () => {
   });
 
   describe('findAll', () => {
+    const incluirDono = {
+      usuario: { select: { nome: true, email: true } },
+    };
+
     it('usuario comum lista só os chamados dele', async () => {
       prisma.chamado.findMany.mockResolvedValue([chamadoDoUsuario5]);
 
@@ -73,6 +77,7 @@ describe('ChamadosService', () => {
 
       expect(prisma.chamado.findMany).toHaveBeenCalledWith({
         where: { usuarioId: 5 },
+        include: incluirDono,
       });
     });
 
@@ -81,7 +86,9 @@ describe('ChamadosService', () => {
 
       await service.findAll(9, 'ADMIN');
 
-      expect(prisma.chamado.findMany).toHaveBeenCalledWith();
+      expect(prisma.chamado.findMany).toHaveBeenCalledWith({
+        include: incluirDono,
+      });
     });
   });
 

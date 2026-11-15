@@ -23,7 +23,6 @@ describe('AuthService', () => {
   };
 
   beforeAll(async () => {
-    // Hash de verdade da senha 123456 (custo 4 só para o teste ser rápido)
     const senhaHash = await bcrypt.hash('123456', 4);
     usuarioNoBanco = {
       id: 5,

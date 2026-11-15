@@ -34,4 +34,17 @@ export class AuthService {
 
     return { accessToken };
   }
+
+  async perfil(id: number) {
+    const usuario = await this.prisma.usuario.findUnique({
+      where: { id },
+      select: { nome: true, email: true, papel: true },
+    });
+
+    if (!usuario) {
+      throw new UnauthorizedException();
+    }
+
+    return usuario;
+  }
 }

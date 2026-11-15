@@ -22,15 +22,9 @@ export class JwtAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<RequestComUsuario>();
-    const authorization = request.headers.authorization;
+    const token = this.extrairToken(request);
 
-    if (!authorization) {
-      throw new UnauthorizedException();
-    }
-
-    const [tipo, token] = authorization.split(' ');
-
-    if (tipo !== 'Bearer' || !token) {
+    if (!token) {
       throw new UnauthorizedException();
     }
 
@@ -40,5 +34,15 @@ export class JwtAuthGuard implements CanActivate {
     } catch {
       throw new UnauthorizedException();
     }
+  }
+
+  private extrairToken(request: RequestComUsuario): string | undefined {
+    const doCookie = request.cookies?.access_token as string | undefined;
+    if (doCookie) {
+      return doCookie;
+    }
+
+    const [tipo, token] = request.headers.authorization?.split(' ') ?? [];
+    return tipo === 'Bearer' ? token : undefined;
   }
 }
